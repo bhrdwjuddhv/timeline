@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 
-import Header from "../shared/components/Header/Header.jsx";
+import Header from "../shared/components/header/header.jsx";
 
 export default function LandingPage() {
 
