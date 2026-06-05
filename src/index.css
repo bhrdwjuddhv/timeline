@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+======================================================
+CELL TASKS SCROLLBAR
+
+Subtle 3 px scrollbar that blends with both dark and
+light calendar themes.  Only visible on hover of the
+cell so it doesn't clutter the grid at rest.
+======================================================
+*/
+
+.cell-tasks-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.25) transparent;
+}
+
+.cell-tasks-container::-webkit-scrollbar {
+    width: 3px;
+}
+
+.cell-tasks-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cell-tasks-container::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.2);
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.cell-tasks-container:hover::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.4);
+}
+
+.cell-tasks-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.6);
+}
