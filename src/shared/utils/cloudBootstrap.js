@@ -64,7 +64,8 @@ function normalizeTask(doc) {
         layer in local values where they exist.
         */
         priority: doc.priority || "medium",
-        date: doc.date || "",
+        startDate: doc.startDate || doc.date || "",
+        endDate: doc.endDate || "",
         time: doc.time || "",
         socialMedia: doc.socialMedia || "instagram",
         column: doc.column || "todo",

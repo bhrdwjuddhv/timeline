@@ -21,6 +21,7 @@ import {
 import {
   getValidTasks,
   sortTasks,
+  taskCoversDate,
 } from "../shared/utils/calendarUtils.js";
 
 export default function DailyCalendarPage() {
@@ -103,7 +104,7 @@ export default function DailyCalendarPage() {
     return sortTasks(
         validTasks.filter(
             (task) =>
-                task.date === todayStr
+                taskCoversDate(task, todayStr)
         )
     );
 

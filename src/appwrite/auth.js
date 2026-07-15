@@ -168,6 +168,32 @@ export class AuthService {
 
     /*
     ==================================================
+    UPDATE TERMS ACCEPTED
+    ==================================================
+    */
+
+    async updateTermsAccepted() {
+
+        try {
+
+            return await this.account.updatePrefs({
+                acceptedTerms: true,
+                acceptedTermsAt: new Date().toISOString(),
+            });
+
+        } catch (error) {
+
+            console.log(
+                "UPDATE PREFS ERROR:",
+                error
+            );
+
+            throw error;
+        }
+    }
+
+    /*
+    ==================================================
     LOGOUT
     ==================================================
     */

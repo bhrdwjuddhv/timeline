@@ -23,8 +23,14 @@ import Login from "@/app/loginPage.jsx";
 
 import Signup from "@/app/signupPage.jsx";
 
+import TermsPage from "@/app/termsPage.jsx";
+
+import PrivacyPage from "@/app/privacyPage.jsx";
+
 /* AUTH LAYOUT */
 import Protected from "@/app/AuthLayout.jsx";
+
+import MobileGate from "@/shared/components/MobileGate.jsx";
 
 export default function AppRoutes() {
 
@@ -92,7 +98,9 @@ export default function AppRoutes() {
                 element={
                     <Protected authentication={true}>
 
-                        <Dashboard />
+                        <MobileGate>
+                            <Dashboard />
+                        </MobileGate>
 
                     </Protected>
                 }
@@ -151,9 +159,19 @@ export default function AppRoutes() {
                 path="/shared/calendar/:calendarId"
 
                 element={
-                    <BrandCalendarPage readOnly />
+                    <MobileGate>
+                        <BrandCalendarPage readOnly />
+                    </MobileGate>
                 }
             />
+
+            {/* ========================================= */}
+            {/* TERMS & PRIVACY */}
+            {/* ========================================= */}
+
+            <Route path="/terms" element={<TermsPage />} />
+
+            <Route path="/privacy" element={<PrivacyPage />} />
 
             {/* ========================================= */}
             {/* 404 */}

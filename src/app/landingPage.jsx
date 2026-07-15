@@ -1063,6 +1063,245 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* ========================================= */}
+        {/* CONTACT */}
+        {/* ========================================= */}
+
+        <section
+            className="
+          relative
+          z-10
+
+          max-w-7xl
+          mx-auto
+
+          px-6
+          pb-32
+        "
+        >
+
+          <motion.div
+
+              initial={{
+                opacity: 0,
+                y: 30,
+              }}
+
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+
+              transition={{
+                duration: 0.5,
+              }}
+
+              viewport={{
+                once: true,
+              }}
+
+              className="
+            relative
+            overflow-hidden
+
+            rounded-[48px]
+
+            border
+            border-white/10
+
+            bg-white/[0.02]
+
+            backdrop-blur-3xl
+
+            p-16
+            text-center
+          "
+          >
+
+            {/* GLOW */}
+            <div
+                className="
+              absolute
+              inset-0
+
+              opacity-30
+
+              bg-gradient-to-br
+              from-cyan-500/10
+              to-fuchsia-500/10
+            "
+            />
+
+            <div className="relative">
+
+              <div
+                  className="
+                inline-flex
+                items-center
+                gap-2
+
+                px-4
+                py-2
+
+                rounded-full
+
+                bg-fuchsia-500/10
+                border
+                border-fuchsia-500/20
+
+                text-fuchsia-300
+                text-sm
+
+                mb-8
+              "
+              >
+
+                <i className="bi bi-person-lines-fill"></i>
+
+                Developer
+              </div>
+
+              <h2
+                  className="
+                text-4xl
+                font-black
+                leading-tight
+              "
+              >
+
+                Get in touch
+              </h2>
+
+              <p
+                  className="
+                mt-6
+
+                text-lg
+                leading-8
+
+                text-white/60
+
+                max-w-xl
+                mx-auto
+              "
+              >
+                Have feedback, questions, or ideas?
+                Reach out on any of these platforms
+                or leave a quick note.
+              </p>
+
+              {/* SOCIALS */}
+              <div
+                  className="
+                mt-10
+                flex
+                items-center
+                justify-center
+                gap-5
+                flex-wrap
+              "
+              >
+
+                {[
+                  {
+                    label: "GitHub",
+                    icon: "bi-github",
+                    url: "https://github.com/bhrdwjuddhv",
+                  },
+                  {
+                    label: "LinkedIn",
+                    icon: "bi-linkedin",
+                    url: "https://www.linkedin.com/in/bhrdwjuddhv/",
+                  },
+                  {
+                    label: "X / Twitter",
+                    icon: "bi-twitter-x",
+                    url: "https://x.com/uddhavbhard",
+                  },
+                ].map((link) => (
+
+                    <a
+                        key={link.label}
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="
+                      flex
+                      items-center
+                      gap-3
+
+                      px-6
+                      py-3
+
+                      rounded-2xl
+
+                      border
+                      border-white/10
+
+                      bg-white/[0.03]
+
+                      text-white/70
+                      font-semibold
+
+                      hover:bg-white/[0.07]
+                      hover:text-white
+
+                      transition-all
+                      duration-300
+                    "
+                    >
+                        <i className={`bi ${link.icon}`}></i>
+                        {link.label}
+                    </a>
+                ))}
+
+              </div>
+
+              {/* FEEDBACK */}
+              <div className="mt-8">
+
+                <a
+                    href="https://www.candiq.app/feedback/e3mpAgO7"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="
+                  inline-flex
+                  items-center
+                  gap-2
+
+                  mt-2
+                  px-8
+                  py-4
+
+                  rounded-2xl
+
+                  bg-gradient-to-r
+                  from-fuchsia-500
+                  via-pink-500
+                  to-cyan-400
+
+                  text-white
+                  font-bold
+
+                  shadow-2xl
+                  shadow-fuchsia-500/30
+
+                  hover:scale-105
+                  hover:cursor-pointer
+
+                  transition-all
+                "
+                >
+                    <i className="bi bi-chat-heart-fill"></i>
+                    Leave Feedback
+                </a>
+
+              </div>
+
+            </div>
+          </motion.div>
+        </section>
       </div>
   );
 }

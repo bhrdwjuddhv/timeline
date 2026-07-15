@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
 
 /*
 =========================================
@@ -284,6 +285,20 @@ export default function Footer() {
                     "
                 >
 
+                    {/* CONTACT DEVELOPER */}
+
+                    <div
+                        className="
+                            text-xs
+                            uppercase
+                            tracking-[0.2em]
+                            text-white/30
+                            font-semibold
+                        "
+                    >
+                        Contact developer
+                    </div>
+
                     {/* SOCIALS */}
 
                     <div
@@ -376,6 +391,75 @@ export default function Footer() {
                     </div>
 
                 
+
+                    {/* FEEDBACK */}
+
+                    <a
+                        href="https://www.candiq.app/feedback/e3mpAgO7"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="
+                            px-5
+                            py-3
+
+                            rounded-2xl
+
+                            border
+                            border-white/10
+
+                            bg-white/[0.03]
+
+                            text-sm
+                            font-semibold
+                            text-white/70
+
+                            hover:bg-white/[0.07]
+                            hover:text-white
+
+                            transition-all
+                            duration-300
+                        "
+                    >
+                        Leave feedback
+                    </a>
+
+                    {/* TERMS & PRIVACY */}
+
+                    <div
+                        className="
+                            flex
+                            items-center
+                            gap-5
+                        "
+                    >
+
+                        <Link
+                            to="/terms"
+                            className="
+                                text-xs
+                                text-white/30
+                                hover:text-white/60
+                                transition-colors
+                            "
+                        >
+                            Terms of Use
+                        </Link>
+
+                        <span className="text-white/15 text-xs">·</span>
+
+                        <Link
+                            to="/privacy"
+                            className="
+                                text-xs
+                                text-white/30
+                                hover:text-white/60
+                                transition-colors
+                            "
+                        >
+                            Privacy Policy
+                        </Link>
+
+                    </div>
 
                     {/* COPYRIGHT */}
 

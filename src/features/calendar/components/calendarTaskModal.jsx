@@ -120,6 +120,12 @@ export default function CalendarTaskModal({
     const [time, setTime] =
         useState("");
 
+    const [endDate, setEndDate] =
+        useState("");
+
+    const [endDateError, setEndDateError] =
+        useState("");
+
     /*
     =========================
     FORMAT DATE
@@ -194,12 +200,19 @@ export default function CalendarTaskModal({
                 editingTask.time || ""
             );
 
+            setEndDate(
+                editingTask.endDate || ""
+            );
+
         } else {
 
             setTitle("");
             setSocialMedia("instagram");
             setTime("");
+            setEndDate("");
         }
+
+        setEndDateError("");
 
     }, [editingTask, open]);
 
@@ -216,6 +229,19 @@ export default function CalendarTaskModal({
         if (!title.trim()) {
             return;
         }
+
+        const startDateStr =
+            editingTask?.startDate ||
+            selectedDate;
+
+        if (endDate && endDate < startDateStr) {
+            setEndDateError(
+                "End date cannot be before start date."
+            );
+            return;
+        }
+
+        setEndDateError("");
 
         /*
         =========================================
@@ -237,11 +263,13 @@ export default function CalendarTaskModal({
 
             time,
 
-            date:
+            startDate:
                 formatDate(
-                    editingTask?.date ||
-                    selectedDate
+                    startDateStr
                 ),
+
+            endDate:
+                endDate || "",
 
             /*
             =========================================
@@ -368,27 +396,89 @@ export default function CalendarTaskModal({
 
                             </div>
 
-                            <div
-                                className="
-                  mb-6
-                  rounded-2xl
-                  border border-white/10
-                  bg-white/5
-                  px-5 py-4
-                  text-white/70
-                "
-                            >
+                            <div className="mb-6 flex gap-3">
 
-                                <div className="text-xs uppercase tracking-widest mb-1 opacity-50">
-                                    Selected Date
+                                <div
+                                    className="
+                      flex-1
+                      rounded-2xl
+                      border border-white/10
+                      bg-white/5
+                      px-5 py-4
+                      text-white/70
+                    "
+                                >
+
+                                    <div className="text-xs uppercase tracking-widest mb-1 opacity-50">
+                                        Start Date
+                                    </div>
+
+                                    <div className="font-bold text-lg text-white">
+                                        {editingTask?.startDate ||
+                                            selectedDate}
+                                    </div>
+
                                 </div>
 
-                                <div className="font-bold text-lg text-white">
-                                    {editingTask?.date ||
-                                        selectedDate}
+                                <div
+                                    className="
+                      flex-1
+                      rounded-2xl
+                      border border-white/10
+                      bg-white/5
+                      px-5 py-4
+                      text-white/70
+                    "
+                                >
+
+                                    <div className="text-xs uppercase tracking-widest mb-1 opacity-50">
+                                        End Date
+                                    </div>
+
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        min={
+                                            editingTask?.startDate ||
+                                            selectedDate ||
+                                            ""
+                                        }
+                                        onChange={(e) => {
+                                            setEndDate(
+                                                e.target.value
+                                            );
+                                            setEndDateError("");
+                                        }}
+                                        className="
+                          w-full
+                          bg-transparent
+                          outline-none
+                          font-bold
+                          text-lg
+                          text-white
+                        "
+                                    />
+
                                 </div>
 
                             </div>
+
+                            {endDateError && (
+                                <div
+                                    className="
+                    -mt-2
+                    mb-4
+                    rounded-2xl
+                    border border-red-500/20
+                    bg-red-500/10
+                    px-5 py-3
+                    text-red-400
+                    text-sm
+                  "
+                                >
+                                    {endDateError}
+                                </div>
+                            )}
 
                             <form
                                 onSubmit={handleSubmit}

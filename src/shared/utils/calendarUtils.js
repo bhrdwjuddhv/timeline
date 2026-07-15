@@ -138,6 +138,17 @@ TASK FILTERING
 ==================================================
 */
 
+export function taskCoversDate(task, dateString) {
+
+  const start = task.startDate || "";
+
+  if (!start) return false;
+
+  const end = task.endDate || start;
+
+  return start <= dateString && dateString <= end;
+}
+
 export function getTasksForDate(
     tasks = [],
     dateString
@@ -145,7 +156,7 @@ export function getTasksForDate(
 
   return tasks.filter(
       (task) =>
-          task.date === dateString
+          taskCoversDate(task, dateString)
   );
 }
 
@@ -256,7 +267,7 @@ export function groupTasksByDate(
       (groups, task) => {
 
         const date =
-            task.date || "undated";
+            task.startDate || "undated";
 
         if (!groups[date]) {
 
@@ -295,14 +306,14 @@ export function getCalendarStats(
       tasks.filter((task) => {
 
         if (
-            !task.date ||
+            !task.startDate ||
             task.completed
         ) {
           return false;
         }
 
         return (
-            new Date(task.date) <
+            new Date(task.startDate) <
             new Date()
         );
 
@@ -425,11 +436,26 @@ export function moveTaskToDate(
     newPosition = 0
 ) {
 
+  const oldStart = task.startDate || "";
+  const oldEnd = task.endDate || "";
+  let newEndDate = "";
+
+  if (oldEnd && oldEnd !== oldStart && oldStart) {
+    const span =
+        new Date(oldEnd).getTime() -
+        new Date(oldStart).getTime();
+    newEndDate = formatDate(
+        new Date(new Date(newDate).getTime() + span)
+    );
+  }
+
   return {
 
     ...task,
 
-    date: newDate,
+    startDate: newDate,
+
+    endDate: newEndDate,
 
     position: newPosition,
 

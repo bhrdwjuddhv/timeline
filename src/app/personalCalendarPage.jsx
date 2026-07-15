@@ -531,6 +531,10 @@ export default function PersonalCalendarPage() {
                 taskCount={
                     validTasks.length
                 }
+
+                tasks={
+                    validTasks
+                }
             />
 
             {/* ========================================= */}

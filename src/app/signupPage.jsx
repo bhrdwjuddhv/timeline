@@ -821,6 +821,63 @@ export default function SignupPage() {
                                 </p>
                             )}
 
+                            <div className="flex items-start gap-3">
+
+                                <input
+                                    type="checkbox"
+                                    id="acceptTerms"
+                                    className="
+                                        mt-1
+                                        w-5
+                                        h-5
+                                        rounded
+                                        accent-fuchsia-500
+                                        shrink-0
+                                        cursor-pointer
+                                    "
+                                    {...register("acceptTerms", {
+                                        required:
+                                            "You must accept the Terms of Use and Privacy Policy to create an account.",
+                                    })}
+                                />
+
+                                <label
+                                    htmlFor="acceptTerms"
+                                    className="
+                                        text-sm
+                                        leading-6
+                                        text-white/60
+                                        cursor-pointer
+                                    "
+                                >
+                                    I agree to the{" "}
+                                    <Link
+                                        to="/terms"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-fuchsia-400 hover:text-fuchsia-300 font-semibold transition-colors"
+                                    >
+                                        Terms of Use
+                                    </Link>{" "}
+                                    and{" "}
+                                    <Link
+                                        to="/privacy"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-fuchsia-400 hover:text-fuchsia-300 font-semibold transition-colors"
+                                    >
+                                        Privacy Policy
+                                    </Link>
+                                </label>
+
+                            </div>
+
+                            {errors.acceptTerms && (
+                                <p className="mt-1 text-sm text-red-400">
+                                    {errors.acceptTerms.message}
+                                </p>
+                            )}
+
                             <Button
                                 type="submit"
 

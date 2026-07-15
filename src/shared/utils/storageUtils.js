@@ -177,7 +177,8 @@ export function createTask(calendarId, taskData = {}) {
         description: String(taskData.description || ""),
         completed: Boolean(taskData.completed),
         priority: String(taskData.priority || "medium"),
-        date: String(taskData.date || ""),
+        startDate: String(taskData.startDate || ""),
+        endDate: String(taskData.endDate || ""),
         time: String(taskData.time || ""),
         socialMedia: String(
             taskData.socialMedia || "instagram"

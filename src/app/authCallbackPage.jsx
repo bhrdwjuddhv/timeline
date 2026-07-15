@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -7,6 +7,7 @@ import { login } from "@/store/AuthSlice.js";
 import { setCalendars } from "@/store/calendarSlice.js";
 import { setTasks } from "@/store/taskSlice.js";
 import { bootstrapUserData } from "@/shared/utils/cloudBootstrap.js";
+import AcceptTermsModal from "@/features/dashboard/components/AcceptTermsModal.jsx";
 
 function readCached(key) {
     try {
@@ -21,6 +22,8 @@ export default function AuthCallbackPage() {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const [pendingUser, setPendingUser] = useState(null);
 
     useEffect(() => {
 
@@ -79,6 +82,16 @@ export default function AuthCallbackPage() {
                     );
                 }
 
+                /*
+                Gate on terms acceptance.
+                If the user hasn't accepted yet, show the modal
+                before completing login and navigating to dashboard.
+                */
+                if (!user.prefs?.acceptedTerms) {
+                    setPendingUser(user);
+                    return;
+                }
+
                 dispatch(login(user));
                 navigate("/dashboard");
 
@@ -92,6 +105,20 @@ export default function AuthCallbackPage() {
         completeOAuthLogin();
 
     }, [dispatch, navigate]);
+
+    if (pendingUser) {
+
+        return (
+            <div className="min-h-screen bg-[#050816]">
+                <AcceptTermsModal
+                    onAccepted={() => {
+                        dispatch(login(pendingUser));
+                        navigate("/dashboard");
+                    }}
+                />
+            </div>
+        );
+    }
 
     return (
 

@@ -387,6 +387,7 @@ export default function BrandCalendarPage({
                     onShare={handleShare}
                     saveState={effectiveSaveState}
                     taskCount={calendarTasks.length}
+                    tasks={calendarTasks}
                 />
 
                 {/* CALENDAR */}

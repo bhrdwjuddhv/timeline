@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { getTasks, getCalendars } from "../../../shared/utils/storageUtils.js";
+import { taskCoversDate } from "../../../shared/utils/calendarUtils.js";
 import { useTheme } from "../../../app/providers/ThemeContext.jsx";
 import { useMemo } from "react";
 
@@ -21,7 +22,7 @@ export default function DailyCalendar() {
   });
 
   const todaysTasks = useMemo(
-    () => tasks.filter((task) => task.date === today),
+    () => tasks.filter((task) => taskCoversDate(task, today)),
     [tasks, today]
   );
 

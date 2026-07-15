@@ -272,7 +272,8 @@ export class Service {
             await Promise.all(
                 tasks.map((task) =>
                     this.updateTask(task.$id, {
-                        date: task.date,
+                        startDate: task.startDate,
+                        endDate: task.endDate,
                         position: task.position,
                         column: task.column,
                     })

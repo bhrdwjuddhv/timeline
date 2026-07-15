@@ -11,6 +11,7 @@ import {
 } from "../../utils/storageUtils.js";
 
 import { scheduleSync } from "../../utils/autoSyncManager.js";
+import { taskCoversDate } from "../../utils/calendarUtils.js";
 
 /*
 ======================================================
@@ -107,7 +108,8 @@ export default memo(function Calendar({
                     title: task.title,
                     socialMedia: task.socialMedia,
                     time: task.time,
-                    date: formatDate(new Date(task.date)),
+                    startDate: formatDate(new Date(task.startDate)),
+                    endDate: task.endDate || "",
                     calendarId: task.calendarId,
                 });
             } else {
@@ -115,7 +117,8 @@ export default memo(function Calendar({
                     title: task.title,
                     socialMedia: task.socialMedia,
                     time: task.time,
-                    date: formatDate(new Date(task.date)),
+                    startDate: formatDate(new Date(task.startDate)),
+                    endDate: task.endDate || "",
                 });
             }
 
@@ -166,8 +169,23 @@ export default memo(function Calendar({
         (date) => {
             if (readOnly || !draggedTask) return;
 
+            const newStart = formatDate(new Date(date));
+            const oldStart = draggedTask.startDate || "";
+            const oldEnd = draggedTask.endDate || "";
+            let newEnd = "";
+
+            if (oldEnd && oldEnd !== oldStart && oldStart) {
+                const span =
+                    new Date(oldEnd).getTime() -
+                    new Date(oldStart).getTime();
+                newEnd = formatDate(
+                    new Date(new Date(newStart).getTime() + span)
+                );
+            }
+
             updateTask(draggedTask.id, {
-                date: formatDate(new Date(date)),
+                startDate: newStart,
+                endDate: newEnd,
             });
 
             scheduleSync();
@@ -386,8 +404,7 @@ export default memo(function Calendar({
                     {calendarDays.map((calendarDay, index) => {
                         const dayTasks = tasks.filter(
                             (task) =>
-                                formatDate(new Date(task.date)) ===
-                                calendarDay.date
+                                taskCoversDate(task, calendarDay.date)
                         );
 
                         const isToday =
@@ -436,8 +453,8 @@ export default memo(function Calendar({
                         w-9 h-9
                         rounded-xl
                         bg-white/10 hover:bg-white/20
-                        opacity-0 hover:cursor-pointer
-                        group-hover:opacity-100
+                        opacity-100 lg:opacity-0 hover:cursor-pointer
+                        lg:group-hover:opacity-100
                         transition-all
                         flex items-center justify-center
                       "
