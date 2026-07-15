@@ -50,8 +50,12 @@ function prepareExport(element) {
     });
 
     /* ── 3. Cell overflow ── */
+    /* Skip the multi-day overlay — it is an absolute
+       sibling, not a day cell. */
     const cells = grids.length
-        ? Array.from(grids[grids.length - 1].children)
+        ? Array.from(grids[grids.length - 1].children).filter(
+              (c) => !c.hasAttribute("data-span-overlay")
+          )
         : [];
 
     const prevCellStyles = cells.map((c) => ({
@@ -85,6 +89,26 @@ function prepareExport(element) {
         c.style.minHeight = "unset";
     });
 
+    /* ── 5. Multi-day span bars ──
+       Live positions assume fixed 220px rows. With rows
+       switched to auto (step 2) the rows grow, so re-anchor
+       each bar to its row's actual offsetTop. */
+    const bars = element.querySelectorAll("[data-span-bar]");
+
+    const prevBarStyles = Array.from(bars).map((b) => ({
+        top: b.style.top,
+    }));
+
+    bars.forEach((b) => {
+        const rowIndex = parseInt(b.getAttribute("data-row-index"), 10);
+        const offset = parseFloat(b.getAttribute("data-bar-offset")) || 0;
+        const rowFirstCell = cells[rowIndex * 7];
+
+        if (rowFirstCell) {
+            b.style.top = `${rowFirstCell.offsetTop + offset}px`;
+        }
+    });
+
     return {
         prev,
         grids,
@@ -93,6 +117,8 @@ function prepareExport(element) {
         prevCellStyles,
         containers,
         prevContainerStyles,
+        bars,
+        prevBarStyles,
     };
 }
 
@@ -111,6 +137,8 @@ function restoreExport(state) {
         prevCellStyles,
         containers,
         prevContainerStyles,
+        bars,
+        prevBarStyles,
         element,
     } = state;
 
@@ -134,6 +162,10 @@ function restoreExport(state) {
         c.style.maxHeight = prevContainerStyles[i].maxHeight;
         c.style.overflow = prevContainerStyles[i].overflow;
         c.style.minHeight = prevContainerStyles[i].minHeight;
+    });
+
+    bars.forEach((b, i) => {
+        b.style.top = prevBarStyles[i].top;
     });
 }
 

@@ -15,6 +15,8 @@ import PersonalCalendarPage from "../personalCalendarPage.jsx";
 
 import DailyCalendarPage from "../dailyCalendarPage.jsx";
 
+import WeeklyCalendarPage from "../weeklyCalendarPage.jsx";
+
 import CalendarsGalleryPage from "../calendarsGalleryPage.jsx";
 
 import BrandCalendarPage from "../brandCalendarPage.jsx";
@@ -151,6 +153,15 @@ export default function AppRoutes() {
 
                     element={
                         <DailyCalendarPage />
+                    }
+                />
+
+                {/* WEEKLY */}
+                <Route
+                    path="weekly"
+
+                    element={
+                        <WeeklyCalendarPage />
                     }
                 />
             </Route>

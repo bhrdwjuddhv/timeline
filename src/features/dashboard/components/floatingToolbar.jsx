@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import { themes } from "@/shared/utils/themeUtils.js";
-import { formatDate, taskCoversDate } from "@/shared/utils/calendarUtils.js";
 
 export default function FloatingToolbar({
                                             title,
@@ -16,7 +15,6 @@ export default function FloatingToolbar({
                                             onShare,
                                             saveState = "idle",
                                             taskCount = 0,
-                                            tasks = [],
                                         }) {
     const [themeDropdownOpen, setThemeDropdownOpen] =
         useState(false);
@@ -25,9 +23,6 @@ export default function FloatingToolbar({
         useState(false);
 
     const [shareDropdownOpen, setShareDropdownOpen] =
-        useState(false);
-
-    const [weekDropdownOpen, setWeekDropdownOpen] =
         useState(false);
 
 
@@ -311,10 +306,6 @@ export default function FloatingToolbar({
                                     false
                                 );
 
-                                setWeekDropdownOpen(
-                                    false
-                                );
-
                             } catch (error) {
 
                                 console.error(
@@ -485,10 +476,6 @@ export default function FloatingToolbar({
                                 );
 
                                 setShareDropdownOpen(
-                                    false
-                                );
-
-                                setWeekDropdownOpen(
                                     false
                                 );
                             }}
@@ -757,250 +744,6 @@ export default function FloatingToolbar({
                 )}
 
                 {/* ========================================= */}
-                {/* WEEK */}
-                {/* ========================================= */}
-
-                <div className="relative">
-                    <button
-                        onClick={() => {
-                            setWeekDropdownOpen(
-                                !weekDropdownOpen
-                            );
-
-                            setThemeDropdownOpen(
-                                false
-                            );
-
-                            setExportDropdownOpen(
-                                false
-                            );
-
-                            setShareDropdownOpen(
-                                false
-                            );
-                        }}
-                        className="
-              flex
-              items-center
-              gap-2
-              hover:cursor-pointer
-              px-4
-              py-3
-              rounded-2xl
-              text-sm
-              font-semibold
-              border
-              border-white/10
-              bg-white/10
-              text-white
-              hover:bg-white/15
-              transition-all
-            "
-                    >
-                        <i className="bi bi-calendar-week"></i>
-
-                        Week
-
-                        <i
-                            className={`
-                bi
-                bi-chevron-down
-                text-xs
-                transition-transform
-                ${
-                                weekDropdownOpen
-                                    ? "rotate-180"
-                                    : ""
-                            }
-              `}
-                        ></i>
-                    </button>
-
-                    <AnimatePresence>
-                        {weekDropdownOpen && (() => {
-                            const todayDate = new Date();
-                            const todayStr = formatDate(todayDate);
-
-                            const weekDays = Array.from(
-                                { length: 8 },
-                                (_, i) => {
-                                    const d = new Date(todayDate);
-                                    d.setDate(
-                                        todayDate.getDate() - 1 + i
-                                    );
-                                    return d;
-                                }
-                            );
-
-                            return (
-                                <motion.div
-                                    initial={{
-                                        opacity: 0,
-                                        y: 10,
-                                        scale: 0.95,
-                                    }}
-                                    animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        scale: 1,
-                                    }}
-                                    exit={{
-                                        opacity: 0,
-                                        y: 10,
-                                        scale: 0.95,
-                                    }}
-                                    transition={{
-                                        duration: 0.18,
-                                    }}
-                                    className="
-                    absolute
-                    right-0
-                    top-full
-                    mt-3
-
-                    w-[360px]
-
-                    rounded-[28px]
-
-                    border
-                    border-white/10
-
-                    bg-[#0b1020]/95
-
-                    shadow-2xl
-                    backdrop-blur-xl
-
-                    overflow-hidden
-
-                    z-[999]
-                  "
-                                >
-                                    {/* HEADER */}
-                                    <div className="p-5 border-b border-white/10">
-
-                                        <div className="text-lg font-bold text-white">
-                                            This Week
-                                        </div>
-
-                                        <p className="mt-2 text-sm leading-6 text-white/50">
-                                            Yesterday through the next 6 days.
-                                        </p>
-
-                                    </div>
-
-                                    {/* DAYS */}
-                                    <div
-                                        className="
-                        max-h-[420px]
-                        overflow-y-auto
-                        p-3
-                        flex
-                        flex-col
-                        gap-2
-                      "
-                                    >
-                                        {weekDays.map((dayDate) => {
-                                            const dateStr =
-                                                formatDate(dayDate);
-
-                                            const isToday =
-                                                dateStr === todayStr;
-
-                                            const dayTasks =
-                                                tasks.filter((t) =>
-                                                    taskCoversDate(t, dateStr)
-                                                );
-
-                                            const label =
-                                                dayDate.toLocaleDateString(
-                                                    "en-US",
-                                                    {
-                                                        weekday: "short",
-                                                        month: "short",
-                                                        day: "numeric",
-                                                    }
-                                                );
-
-                                            return (
-                                                <div
-                                                    key={dateStr}
-                                                    className={`
-                                  rounded-2xl
-                                  border
-                                  p-4
-
-                                  ${
-                                                        isToday
-                                                            ? "border-fuchsia-500/40 bg-fuchsia-500/10"
-                                                            : "border-white/5 bg-white/[0.03]"
-                                                    }
-                                `}
-                                                >
-                                                    <div
-                                                        className={`
-                                    text-xs
-                                    font-black
-                                    uppercase
-                                    tracking-widest
-                                    mb-2
-
-                                    ${
-                                                            isToday
-                                                                ? "text-fuchsia-400"
-                                                                : "text-white/50"
-                                                        }
-                                  `}
-                                                    >
-                                                        {label}
-                                                        {isToday && (
-                                                            <span className="ml-2 normal-case tracking-normal font-semibold text-fuchsia-400/70">
-                                                                Today
-                                                            </span>
-                                                        )}
-                                                    </div>
-
-                                                    {dayTasks.length === 0 ? (
-
-                                                        <div className="text-xs text-white/25 italic">
-                                                            Nothing planned
-                                                        </div>
-
-                                                    ) : (
-
-                                                        <div className="flex flex-col gap-1.5">
-                                                            {dayTasks.map(
-                                                                (task) => (
-                                                                    <div
-                                                                        key={task.id}
-                                                                        className="flex items-center gap-2 text-xs text-white/75"
-                                                                    >
-                                                                        <i
-                                                                            className={`bi bi-${task.socialMedia || "circle-fill"} text-white/40 shrink-0`}
-                                                                        />
-                                                                        <span className="flex-1 truncate">
-                                                                            {task.title}
-                                                                        </span>
-                                                                        {task.time && (
-                                                                            <span className="text-white/35 shrink-0">
-                                                                                {task.time}
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </motion.div>
-                            );
-                        })()}
-                    </AnimatePresence>
-                </div>
-
-                {/* ========================================= */}
                 {/* EXPORT */}
                 {/* ========================================= */}
 
@@ -1016,10 +759,6 @@ export default function FloatingToolbar({
                             );
 
                             setShareDropdownOpen(
-                                false
-                            );
-
-                            setWeekDropdownOpen(
                                 false
                             );
                         }}

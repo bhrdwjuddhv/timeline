@@ -27,6 +27,23 @@ Export     : exportUtils.js temporarily removes the
 ======================================================
 */
 
+/*
+======================================================
+MULTI-DAY BAR GEOMETRY
+Overlay bars are positioned with absolute px math
+derived from the 7-column grid: gap-4 (16px) gutters
+and fixed 220px rows.
+======================================================
+*/
+
+const GRID_GAP = 16;                          // gap-4
+const ROW_HEIGHT = 220;                        // auto-rows-[220px]
+const ROW_STRIDE = ROW_HEIGHT + GRID_GAP;      // one grid row + gutter
+const BAR_HEIGHT = 28;                          // reserved bar height
+const LANE_GAP = 6;
+const LANE_STRIDE = BAR_HEIGHT + LANE_GAP;      // vertical step per lane
+const BAR_TOP = 48;                             // first lane offset from cell top
+
 export default memo(function Calendar({
     tasks = [],
     allTasks = [],
@@ -272,6 +289,89 @@ export default memo(function Calendar({
 
     /*
     =========================
+    MULTI-DAY SPAN SEGMENTS
+    One continuous bar per grid row for every task
+    whose endDate extends past its startDate.
+    =========================
+    */
+
+    const isMultiDay = useCallback(
+        (t) => t.endDate && t.startDate && t.endDate > t.startDate,
+        []
+    );
+
+    const { spanSegments, lanesPerRow } = useMemo(() => {
+        const rowsMap = new Map();
+
+        tasks.filter(isMultiDay).forEach((task) => {
+            // contiguous visible slice covered by this task
+            let firstIdx = -1;
+            let lastIdx = -1;
+
+            for (let i = 0; i < calendarDays.length; i++) {
+                if (taskCoversDate(task, calendarDays[i].date)) {
+                    if (firstIdx === -1) firstIdx = i;
+                    lastIdx = i;
+                }
+            }
+
+            if (firstIdx === -1) return;
+
+            const startRow = Math.floor(firstIdx / 7);
+            const endRow = Math.floor(lastIdx / 7);
+
+            for (let r = startRow; r <= endRow; r++) {
+                const rowStart = Math.max(firstIdx, r * 7);
+                const rowEnd = Math.min(lastIdx, r * 7 + 6);
+
+                const seg = {
+                    task,
+                    rowIndex: r,
+                    colStart: rowStart % 7,
+                    colEnd: rowEnd % 7,
+                    isRangeStart:
+                        rowStart === firstIdx &&
+                        calendarDays[firstIdx].date === task.startDate,
+                    isRangeEnd:
+                        rowEnd === lastIdx &&
+                        calendarDays[lastIdx].date === task.endDate,
+                };
+
+                if (!rowsMap.has(r)) rowsMap.set(r, []);
+                rowsMap.get(r).push(seg);
+            }
+        });
+
+        // greedy lane assignment so bars in a row never overlap
+        const lanesPerRow = {};
+        const spanSegments = [];
+
+        rowsMap.forEach((segs, r) => {
+            segs.sort((a, b) => a.colStart - b.colStart);
+
+            const laneEnds = [];
+
+            segs.forEach((seg) => {
+                let lane = 0;
+                while (
+                    lane < laneEnds.length &&
+                    laneEnds[lane] >= seg.colStart
+                ) {
+                    lane++;
+                }
+                seg.lane = lane;
+                laneEnds[lane] = seg.colEnd;
+                spanSegments.push(seg);
+            });
+
+            lanesPerRow[r] = laneEnds.length;
+        });
+
+        return { spanSegments, lanesPerRow };
+    }, [tasks, calendarDays, isMultiDay]);
+
+    /*
+    =========================
     THEME
     =========================
     */
@@ -394,6 +494,7 @@ export default memo(function Calendar({
                 {/* GRID — fixed 220px rows */}
                 <div
                     className="
+            relative
             grid
             grid-cols-7
             gap-4
@@ -404,8 +505,12 @@ export default memo(function Calendar({
                     {calendarDays.map((calendarDay, index) => {
                         const dayTasks = tasks.filter(
                             (task) =>
+                                !isMultiDay(task) &&
                                 taskCoversDate(task, calendarDay.date)
                         );
+
+                        const rowLanes =
+                            lanesPerRow[Math.floor(index / 7)] || 0;
 
                         const isToday =
                             calendarDay.date === todayString;
@@ -415,6 +520,15 @@ export default memo(function Calendar({
                                 key={index}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={() => handleDrop(calendarDay.date)}
+                                onClick={
+                                    readOnly
+                                        ? undefined
+                                        : () => {
+                                            setSelectedDate(calendarDay.date);
+                                            setEditingTask(null);
+                                            setModalOpen(true);
+                                        }
+                                }
                                 className={`
                     group
                     relative
@@ -426,6 +540,8 @@ export default memo(function Calendar({
                     transition-all
                     duration-300
                     hover:-translate-y-1
+
+                    ${readOnly ? "" : "cursor-pointer"}
 
                     ${calendarDay.currentMonth ? "opacity-100" : "opacity-30"}
 
@@ -440,29 +556,6 @@ export default memo(function Calendar({
                     ${theme.cell || "bg-white/[0.03]"}
                   `}
                             >
-                                {/* ADD TASK BUTTON */}
-                                {!readOnly && (
-                                    <button
-                                        onClick={() => {
-                                            setSelectedDate(calendarDay.date);
-                                            setEditingTask(null);
-                                            setModalOpen(true);
-                                        }}
-                                        className="
-                        absolute top-3 left-3
-                        w-9 h-9
-                        rounded-xl
-                        bg-white/10 hover:bg-white/20
-                        opacity-100 lg:opacity-0 hover:cursor-pointer
-                        lg:group-hover:opacity-100
-                        transition-all
-                        flex items-center justify-center
-                      "
-                                    >
-                                        <i className="bi bi-pencil-fill text-xs" />
-                                    </button>
-                                )}
-
                                 {/* DATE NUMBER */}
                                 <div className="flex justify-end mb-2">
                                     <div
@@ -486,7 +579,12 @@ export default memo(function Calendar({
                                 */}
                                 <div
                                     className="cell-tasks-container flex flex-col gap-2 overflow-y-auto flex-1"
-                                    style={{ minHeight: 0 }}
+                                    style={{
+                                        minHeight: 0,
+                                        paddingTop: rowLanes
+                                            ? rowLanes * LANE_STRIDE
+                                            : undefined,
+                                    }}
                                 >
                                     {dayTasks.map((task) => (
                                         <div
@@ -495,9 +593,10 @@ export default memo(function Calendar({
                                             onDragStart={() =>
                                                 handleDragStart(task)
                                             }
-                                            onClick={() =>
-                                                handleTaskClick(task)
-                                            }
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleTaskClick(task);
+                                            }}
                                             className="cursor-grab active:cursor-grabbing shrink-0"
                                         >
                                             <Box
@@ -512,6 +611,67 @@ export default memo(function Calendar({
                             </div>
                         );
                     })}
+
+                    {/*
+                      MULTI-DAY OVERLAY
+                      Bars stack on top of the grid, spanning cell
+                      boundaries. pointer-events-none lets gap clicks
+                      fall through to the cell create handler.
+                    */}
+                    <div
+                        className="absolute inset-0 pointer-events-none"
+                        data-span-overlay="true"
+                    >
+                        {spanSegments.map((seg) => {
+                            const n = seg.colEnd - seg.colStart + 1;
+
+                            const left = `calc((100% - ${6 * GRID_GAP}px) / 7 * ${seg.colStart} + ${GRID_GAP * seg.colStart}px)`;
+                            const width = `calc((100% - ${6 * GRID_GAP}px) / 7 * ${n} + ${GRID_GAP * (n - 1)}px)`;
+
+                            const barOffset =
+                                BAR_TOP + seg.lane * LANE_STRIDE;
+
+                            const top =
+                                seg.rowIndex * ROW_STRIDE + barOffset;
+
+                            return (
+                                <div
+                                    key={`${seg.task.id}-${seg.rowIndex}`}
+                                    data-span-bar="true"
+                                    data-row-index={seg.rowIndex}
+                                    data-bar-offset={barOffset}
+                                    draggable={!readOnly}
+                                    onDragStart={() =>
+                                        handleDragStart(seg.task)
+                                    }
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleTaskClick(seg.task);
+                                    }}
+                                    style={{
+                                        left,
+                                        width,
+                                        top: `${top}px`,
+                                        height: `${BAR_HEIGHT}px`,
+                                    }}
+                                    className={`
+                        absolute
+                        pointer-events-auto
+                        ${readOnly ? "" : "cursor-grab active:cursor-grabbing"}
+                      `}
+                                >
+                                    <Box
+                                        variant="span"
+                                        title={seg.task.title}
+                                        socialMedia={seg.task.socialMedia}
+                                        isRangeStart={seg.isRangeStart}
+                                        isRangeEnd={seg.isRangeEnd}
+                                        theme={theme}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 

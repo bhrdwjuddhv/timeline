@@ -24,6 +24,11 @@ const navItems = [
     label: "Daily Calendar",
     path: "/dashboard/daily",
   },
+  {
+    icon: "bi-calendar-week",
+    label: "Weekly Calendar",
+    path: "/dashboard/weekly",
+  },
 ];
 
 export default function Sidebar() {

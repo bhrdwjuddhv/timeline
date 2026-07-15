@@ -3,6 +3,9 @@ export default function Box({
                               socialMedia,
                               time,
                               theme,
+                              variant,
+                              isRangeStart,
+                              isRangeEnd,
                             }) {
 
   const socialMediaColors = {
@@ -93,6 +96,69 @@ export default function Box({
 
   const textColor =
       theme?.text || "text-white";
+
+  /*
+  SPAN VARIANT
+  One continuous bar across a multi-day range.
+  Only the range start gets a rounded left edge + the
+  title; only the range end gets a rounded right edge.
+  */
+  if (variant === "span") {
+
+    return (
+
+        <div
+            className={`
+          calendar-task-box
+
+          flex items-center gap-2
+
+          h-full w-full
+
+          px-3
+
+          overflow-hidden
+
+          shadow-sm
+
+          transition-all duration-300
+
+          ${isRangeStart ? "rounded-l-2xl" : ""}
+          ${isRangeEnd ? "rounded-r-2xl" : ""}
+        `}
+            style={{
+              backgroundColor: currentPlatform.color,
+              color: currentPlatform.text,
+            }}
+        >
+
+          {isRangeStart && (
+              <>
+                <i
+                    className={`
+                bi bi-${socialMedia}
+
+                text-base shrink-0
+              `}
+                />
+
+                <span
+                    className="
+                calendar-task-title
+
+                font-bold text-sm
+
+                truncate
+              "
+                >
+                  {title}
+                </span>
+              </>
+          )}
+
+        </div>
+    );
+  }
 
   return (
 
