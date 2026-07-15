@@ -556,6 +556,30 @@ export default memo(function Calendar({
                     ${theme.cell || "bg-white/[0.03]"}
                   `}
                             >
+                                {/* ADD TASK BUTTON */}
+                                {!readOnly && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedDate(calendarDay.date);
+                                            setEditingTask(null);
+                                            setModalOpen(true);
+                                        }}
+                                        className="
+                        absolute top-3 left-3
+                        w-9 h-9
+                        rounded-xl
+                        bg-white/10 hover:bg-white/20
+                        hidden lg:flex opacity-0 hover:cursor-pointer
+                        group-hover:opacity-100
+                        transition-all
+                        items-center justify-center
+                      "
+                                    >
+                                        <i className="bi bi-pencil-fill text-xs" />
+                                    </button>
+                                )}
+
                                 {/* DATE NUMBER */}
                                 <div className="flex justify-end mb-2">
                                     <div
