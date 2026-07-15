@@ -13,7 +13,7 @@ const socialLinks = [
 
         icon: "bi-github",
 
-        url: "https://github.com/yourusername",
+        url: "https://github.com/bhrdwjuddhv",
 
         glow: "hover:shadow-fuchsia-500/25",
     },
@@ -23,7 +23,7 @@ const socialLinks = [
 
         icon: "bi-linkedin",
 
-        url: "https://linkedin.com/in/yourusername",
+        url: "https://www.linkedin.com/in/bhrdwjuddhv/",
 
         glow: "hover:shadow-cyan-500/25",
     },
@@ -33,20 +33,11 @@ const socialLinks = [
 
         icon: "bi-twitter-x",
 
-        url: "https://x.com/yourusername",
+        url: "https://x.com/uddhavbhard",
 
         glow: "hover:shadow-blue-500/25",
     },
 
-    {
-        name: "Instagram",
-
-        icon: "bi-instagram",
-
-        url: "https://instagram.com/yourusername",
-
-        glow: "hover:shadow-pink-500/25",
-    },
 ];
 
 /*
@@ -384,23 +375,7 @@ export default function Footer() {
                         ))}
                     </div>
 
-                    {/* EMAIL */}
-
-                    <a
-                        href="mailto:yourmail@example.com"
-
-                        className="
-                            text-sm
-
-                            text-white/55
-
-                            hover:text-cyan-300
-
-                            transition-colors
-                        "
-                    >
-                        yourmail@example.com
-                    </a>
+                
 
                     {/* COPYRIGHT */}
 
@@ -408,12 +383,10 @@ export default function Footer() {
                         className="
                             text-xs
                             tracking-wide
-
                             text-white/25
                         "
                     >
                         © 2026 Timeline.
-                        Crafted with precision.
                     </div>
 
                 </div>
